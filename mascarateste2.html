@@ -1,0 +1,188 @@
+<html>
+	<head>
+		<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+	</head>
+	<body>
+		<input type="text" value="949" data-automask />
+		<input type="text" value="949," data-automask />
+		<input type="text" value="949,1" data-automask />
+		<input type="text" value="949,432" data-automask />
+		<br/>
+		<input type="text" value="9545%" data-automask="percent" />
+		<input type="text" value="95451,%" data-automask="percent" />
+		<input type="text" value="95451,9%" data-automask="percent" />
+		<input type="text" value="95451,9343543%" data-automask="percent" />
+		<script>
+		function automask(obj){
+			switch(obj.getAttribute('data-automask')){
+				case "percent":
+					var array = obj.value.replace("%", "").replace("´", "").replace("~", "").replace("^", "").replace("`", "").split('');
+					var iniciaContador = false;
+					var contador = 0;
+					for(var i=0;i<array.length;i++){
+						if(array[i] === ","){
+							iniciaContador = true;
+						}
+						if(iniciaContador){
+							contador++;
+						}
+					}
+					if(!iniciaContador){
+						contador++;
+					}
+					if(contador-1 > 4){
+						for(var i=0;i<(contador-1)-4;i++){
+							array.pop();
+						}
+					}else{
+						for(var i=0;i<=4-contador;i++){
+							array.push("0");
+						}
+					}
+					var res = "";
+					if (array.length >= 4) {
+						for (var i = 0; i < array.length; i++) {
+							if (array[i] === ",") {
+								array.splice(i, 1);
+							}
+							if (array[i] === ".") {
+								array.splice(i, 1);
+							}
+						}
+						array.splice(array.length - 4, 0, ",");
+					}
+					if (array[0] === '.' || array[0] === ',') {
+						array.splice(0, 1);
+					}
+					for (var i = 0; i < array.length; i++) {
+						res += array[i];
+					}
+					obj.value = res + "%";
+					break;
+				default:
+					var array = obj.value.replace("R", "").replace("$", "").replace(" ", "").replace("´", "").replace("~", "").replace("^", "").replace("`", "").replace(".", "").split('');
+					var iniciaContador = false;
+					var contador = 0;
+					for(var i=0;i<array.length;i++){
+						if(array[i] === ","){
+							iniciaContador = true;
+						}
+						if(iniciaContador){
+							contador++;
+						}
+					}
+					if(!iniciaContador){
+						contador++;
+					}
+					if(contador-1 > 2){
+						for(var i=0;i<(contador-1)-2;i++){
+							array.pop();
+						}
+					}else{
+						for(var i=0;i<=2-(contador);i++){
+							array.push("0");
+						}
+					}
+                    var res = "R$ ";
+                    if (array.length >= 2) {
+                        for (var i = 0; i < array.length; i++) {
+                            if (array[i] === ",") {
+                                array.splice(i, 1);
+                            }
+                            if (array[i] === ".") {
+                                array.splice(i, 1);
+                            }
+                        }
+                        array.splice(array.length - 2, 0, ",");
+                        //Definir o limite da máscara nesse loop
+                        for (var i = 6; i <= 1000; i += 4) {
+                            if (array.length >= i) {
+                                array.splice(array.length - i, 0, ".");
+                            }
+                        }
+                    }
+                    if (array[0] === '.' || array[0] === ',') {
+                        array.splice(0, 1);
+                    }
+                    for (var i = 0; i < array.length; i++) {
+                        res += array[i];
+                    }
+                    obj.value = res;
+					break;
+			}
+		}
+		
+		function maskara(obj) {
+			$(obj).keyup(function (e) {
+				switch(obj.getAttribute('data-automask')) {
+					case "percent":
+						var keynum = e.keyCode;
+						if ((keynum >= 48 && keynum < 58) || (keynum >= 96 && keynum < 106)) {
+							var array = obj.value.replace("%", "").replace("´", "").replace("~", "").replace("^", "").replace("`", "").split('');
+							var res = "";
+							if (array.length >= 4) {
+								for (var i = 0; i < array.length; i++) {
+									if (array[i] === ",") {
+										array.splice(i, 1);
+									}
+									if (array[i] === ".") {
+										array.splice(i, 1);
+									}
+								}
+								array.splice(array.length - 4, 0, ",");
+							}
+							if (array[0] === '.' || array[0] === ',') {
+								array.splice(0, 1);
+							}
+							for (var i = 0; i < array.length; i++) {
+								res += array[i];
+							}
+							obj.value = res + "%";
+						} else {
+							obj.value = obj.value.replace(e.key, '');
+						}
+						break;
+					default:
+						var keynum = e.keyCode;
+						if ((keynum >= 48 && keynum < 58) || (keynum >= 96 && keynum < 106)) {
+							var array = obj.value.replace("R", "").replace("$", "").replace(" ", "").replace("´", "").replace("~", "").replace("^", "").replace("`", "").split('');
+							var res = "R$ ";
+							if (array.length >= 2) {
+								for (var i = 0; i < array.length; i++) {
+									if (array[i] === ",") {
+										array.splice(i, 1);
+									}
+									if (array[i] === ".") {
+										array.splice(i, 1);
+									}
+								}
+								array.splice(array.length - 2, 0, ",");
+								//Definir o limite da máscara nesse loop
+								for (var i = 6; i <= 1000; i += 4) {
+									if (array.length >= i) {
+										array.splice(array.length - i, 0, ".");
+									}
+								}
+							}
+							if (array[0] === '.' || array[0] === ',') {
+								array.splice(0, 1);
+							}
+							for (var i = 0; i < array.length; i++) {
+								res += array[i];
+							}
+							obj.value = res;
+						} else {
+							obj.value = obj.value.replace(e.key, '');
+						}
+						break;
+				}
+			});
+		};
+		
+		for(var i=0;i<$("input[data-automask]").length;i++){
+			automask($("input[data-automask]")[i]);
+			maskara($("input[data-automask]")[i]);
+		}
+		</script>
+	</body>
+</html>
